@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dingzhen.dao.info.OrderDao">
+
+	<select id="findList" parameterType="order" resultType="order">
+		select 
+			a.id as "id",
+			a.customerid as "customer.id",
+			a.starttime as "starttime",
+			a.endtime as "endtime",
+			a.totalprice as "totalprice",
+			b.phone as "customer.phone",
+			b.name as "customer.name",
+			b.idcardno as "customer.idcardno"
+		from torder a left join customer b on a.customerid = b.id
+		where 1 = 1	
+		<if test="keyword != null and '' != keyword">
+			and (
+				b.name      like concat('%', #{keyword} ,'%' ) or 
+				b.phone     like concat('%', #{keyword} ,'%' ) or 
+				b.idcardno  like concat('%', #{keyword} ,'%' ) 	
+			)
+		</if>
+		<if test='endtime != null and endtime == "1"'>
+			and a.endtime is not null
+		</if>
+		<if test='endtime != null and endtime == "2"'>
+			and a.endtime is null
+		</if>
+		<if test="start != null and '' != start">
+			and a.starttime >= #{start}
+		</if>	
+		<if test="end != null and '' != end">
+			<![CDATA[ 
+				and a.starttime <= #{end}
+			]]>
+		</if>
+		
+		order by a.starttime desc
+		<if test="page != null and rows != null" >           
+              limit #{page}, #{rows} 
+        </if>
+	</select>
+
+
+	<select id="count" parameterType="order" resultType="int">
+		select 
+			count(*)
+		from torder a left join customer b on a.customerid = b.id
+		where 1 = 1	
+		<if test="keyword != null and '' != keyword">
+			and (
+				b.name      like concat('%', #{keyword} ,'%' ) or 
+				b.phone     like concat('%', #{keyword} ,'%' ) or 
+				b.idcardno  like concat('%', #{keyword} ,'%' ) 	
+			)
+		</if>
+		<if test='endtime != null and endtime == "1"'>
+			and a.endtime is not null
+		</if>
+		<if test='endtime != null and endtime == "2"'>
+			and a.endtime is null
+		</if>
+		<if test="start != null and '' != start">
+			and a.starttime >= #{start}
+		</if>	
+		<if test="end != null and '' != end">
+			<![CDATA[ 
+				and a.starttime <= #{end}
+			]]>
+		</if>
+	</select>
+	
+	
+	<select id="findOne" parameterType="order" resultType="order">
+		select 
+			a.id as "id",
+			a.customerid as "customer.id",
+			a.starttime as "starttime",
+			a.endtime as "endtime",
+			a.totalprice as "totalprice",
+			b.phone as "customer.phone",
+			b.idcardno as "customer.idcardno"
+		from torder a left join customer b on a.customerid = b.id
+		where  a.id = #{id}
+	</select>
+	
+	<insert id="add" parameterType="order" >
+		insert into torder(id,customerid,starttime,totalprice) 
+		values (#{id},#{customer.id},#{starttime},#{totalprice})
+	</insert>
+	
+	
+	<update id="update" parameterType="order">
+    	update torder set 
+    	<trim suffixOverrides=",">
+    		<if test="endtime!=null">endtime=#{endtime},</if>
+			<if test="totalprice!=null">totalprice=#{totalprice},</if>
+		</trim>
+    	where id = #{id}
+    </update>
+	
+	
+	<delete id="delete" parameterType="order">
+		delete from torder where id=#{id}
+	</delete>
+	
+
+</mapper>

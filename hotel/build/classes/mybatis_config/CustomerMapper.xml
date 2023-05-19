@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dingzhen.dao.info.CustomerDao">
+
+	<select id="findList" parameterType="customer" resultType="customer">
+		select 
+			id,name,
+			phone,idcardno,sex,
+			remarks from customer 
+		where 1 = 1	
+		<if test="keyword != null and '' != keyword">
+			and (
+				name      like concat('%', #{keyword} ,'%' ) or 
+				phone     like concat('%', #{keyword} ,'%' ) or 
+				idcardno  like concat('%', #{keyword} ,'%' ) 	
+			)
+		</if>
+		order by CONVERT(name USING gbk)
+		<if test="page != null and rows != null" >           
+              limit #{page}, #{rows} 
+        </if>
+	</select>
+
+
+	<select id="count" parameterType="customer" resultType="int">
+		select 
+			count(*)
+		from customer 
+		where 1 = 1	
+		<if test="keyword != null and '' != keyword">
+			and (
+				name      like concat('%', #{keyword} ,'%' ) or 
+				phone     like concat('%', #{keyword} ,'%' ) or 
+				idcardno  like concat('%', #{keyword} ,'%' ) 	
+			)
+		</if>
+	</select>
+	
+	
+	<select id="findOne" parameterType="customer" resultType="customer">
+		select 
+			id,name,
+			phone,idcardno,sex,
+			remarks from customer 
+		where id = #{id}
+	</select>
+	
+	<insert id="add" parameterType="customer" >
+		insert into customer(id,name,phone,idcardno,remarks,sex) 
+		values (#{id},#{name},#{phone},#{idcardno},#{remarks},#{sex})
+	</insert>
+	
+	
+	<update id="update" parameterType="customer">
+    	update customer set 
+    	<trim suffixOverrides=",">
+    		<if test="sex!=null">sex=#{sex},</if>
+			<if test="name!=null">name=#{name},</if>
+			<if test="phone!=null">phone=#{phone},</if>
+			<if test="idcardno!=null">idcardno=#{idcardno},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+		</trim>
+    	where id = #{id}
+    </update>
+	
+	
+	<delete id="delete" parameterType="customer">
+		delete from customer where id=#{id}
+	</delete>
+	
+
+</mapper>

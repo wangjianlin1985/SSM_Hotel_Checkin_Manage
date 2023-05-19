@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dingzhen.dao.info.OrderArrangeDao">
+
+	<select id="findList" parameterType="orderArrange" resultType="orderArrange">
+		select 
+			a.id as "id",
+			a.orderid as "order.id",
+			a.arrangeid as "arrange.id",
+			b.date as "arrange.date",
+			c.id as "arrange.room.id",
+			c.name as "arrange.room.name",
+			c.price as "arrange.room.price"
+		from orderarrange a
+			left join arrange b on a.arrangeid = b.id
+			left join room c on b.roomid  = c.id
+			where 1 = 1
+		<if test="order != null and order.id != null and '' != order.id">
+			and orderid = #{order.id}
+		</if>	
+		<if test="arrange != null and arrange.id != null and '' != arrange.id">
+			and arrangeid = #{arrange.id}
+		</if>	
+	</select>
+	
+	
+	<select id="findOne" parameterType="orderArrange" resultType="orderArrange">
+		select 
+			a.id as "id",
+			a.orderid as "order.id",
+			a.arrangeid as "arrange.id",
+			b.date as "arrange.date",
+			c.name as "arrange.room.name"
+		from orderarrange a
+			left join arrange b on a.arrangeid = b.id
+			left join room c on b.roomid  = c.id
+		where a.id = #{id}
+	</select>
+	
+	
+	
+	<insert id="add" parameterType="orderArrange">
+		insert into orderarrange(id,orderid,arrangeid) values (#{id},#{order.id},#{arrange.id})
+	</insert>
+	
+	
+	<select id="findListByMap"  parameterType="java.util.Map" resultType="orderArrange">
+		select 
+			a.id as "id",
+			a.orderid as "order.id",
+			d.starttime as "order.starttime",
+			d.endtime as "order.endtime",
+			d.customerid as "order.customer.id",
+			e.name as "order.customer.name",
+			e.phone as "order.customer.phone",
+			e.idcardno as "order.customer.idcardno",
+			a.arrangeid as "arrange.id",
+			b.date as "arrange.date",
+			c.name as "arrange.room.name"
+		from orderarrange a
+			left join arrange b on a.arrangeid = b.id
+			left join room c on b.roomid  = c.id
+			left join torder d on a.orderid = d.id
+			left join customer e on d.customerid = e.id
+		where d.endtime is null
+		<if test="roomname != null and '' != roomname">
+			and c.name = #{roomname}
+		</if>
+			
+	
+	</select>
+	
+
+</mapper>

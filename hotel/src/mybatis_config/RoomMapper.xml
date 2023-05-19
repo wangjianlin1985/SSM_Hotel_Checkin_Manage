@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dingzhen.dao.info.RoomDao">
+
+	<select id="findList" parameterType="room" resultType="room">
+		select 
+			id,name,type,
+			price from room 
+		where 1 = 1
+		<if test="name != null and '' != name">
+			and	name like concat('%',#{name},'%')
+		</if>
+		<if test="type != null and '' != type">
+			and type = #{type}
+		</if>
+		order by CONVERT(name USING gbk)
+		<if test="page != null and rows != null" >           
+              limit #{page}, #{rows} 
+        </if>
+	</select>
+
+
+	<select id="count" parameterType="room" resultType="int">
+		select 
+			count(*)
+		from room 
+		where 1 = 1
+		<if test="name != null and '' != name">
+			and	name like concat('%',#{name},'%')
+		</if>
+		<if test="type != null and '' != type">
+			and type = #{type}
+		</if>
+	</select>
+	
+	
+	<select id="findOne" parameterType="room" resultType="room">
+		select 
+			id,name,type,
+			price from room
+		where id = #{id}
+	</select>
+	
+	<insert id="add" parameterType="room" >
+		insert into room(id,name,price,type) 
+		values (#{id},#{name},#{price},#{type})
+	</insert>
+	
+	
+	<update id="update" parameterType="room">
+    	update room set 
+    	<trim suffixOverrides=",">
+    		<if test="type!=null">type=#{type},</if>
+			<if test="name!=null">name=#{name},</if>
+			<if test="price!=null">price=#{price},</if>
+		</trim>
+    	where id = #{id}
+    </update>
+	
+	
+	<delete id="delete" parameterType="room">
+		delete from room where id=#{id}
+	</delete>
+	
+
+</mapper>
